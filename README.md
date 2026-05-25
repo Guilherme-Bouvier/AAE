@@ -145,26 +145,31 @@ AAE/
 └── README.md
 ````
 
-## ▶️ COMO EXECUTAR O PROJETO
+# ▶️ COMO EXECUTAR O PROJETO
 
-Instalar dependências
-pip install streamlit pandas plotly sqlalchemy playwright
-Instalar navegador do Playwright
-playwright install
-Rodar o sistema
-python launcher.py
+## 📦 Instalar dependências
 
-ou
+ ip install streamlit pandas plotly sqlalchemy playwright
 
-streamlit run dashboard/app.py
+##🌐 Instalar navegador do Playwright
+ playwright install
+
+## 🚀 Rodar o sistema
+ python launcher.py
+
+## 🔁 Alternativa (rodar direto no Streamlit)
+ streamlit run dashboard/app.py
 
 ## 📦 COMO GERAR O EXECUTÁVEL (.EXE)
-Instalar PyInstaller
-pip install pyinstaller
-Criar EXE
-pyinstaller --onefile --noconsole launcher.py
-Arquivo gerado
+
+ Instalar PyInstaller
+ pip install pyinstaller
+
+## Criar EXE
+ pyinstaller --onefile --noconsole launcher.py
+ Arquivo gerado
 /dist/launcher.exe
+
 ## 🧠 FLUXO DE FUNCIONAMENTO
 ````
 Usuário
