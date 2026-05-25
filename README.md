@@ -24,7 +24,7 @@ Ele integra:
 
 # 🏗️ ARQUITETURA DO SISTEMA
 
-
+````
 INPUTS
 │
 ├── 🌐 URL SCRAPER (Playwright)
@@ -44,7 +44,7 @@ INPUTS
 │
 ▼
 👤 USUÁRIO
-
+````
 
 ---
 
@@ -188,14 +188,15 @@ Resultado em tempo real
 ````
 ## 🔥 DIFERENCIAL DO SISTEMA
 
-✔ Sistema em tempo real
-✔ Auto aprendizado
-✔ Captura de tela + URL
-✔ Controle centralizado
-✔ Logs completos
-✔ Arquitetura modular profissional
+ ✔ Sistema em tempo real
+ ✔ Auto aprendizado
+ ✔ Captura de tela + URL
+ ✔ Controle centralizado
+ ✔ Logs completos
+ ✔ Arquitetura modular profissional
 
 ## ⚠️ OBSERVAÇÕES
+
 O sistema usa múltiplas threads
 Playwright pode aumentar o tamanho do EXE
 OCR depende de captura de tela ativa
