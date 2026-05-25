@@ -188,12 +188,12 @@ Resultado em tempo real
 ````
 ## 🔥 DIFERENCIAL DO SISTEMA
 
- ✔ Sistema em tempo real
- ✔ Auto aprendizado
- ✔ Captura de tela + URL
- ✔ Controle centralizado
- ✔ Logs completos
- ✔ Arquitetura modular profissional
+- Sistema em tempo real
+- Auto aprendizado
+- Captura de tela + URL
+- Controle centralizado
+- Logs completos
+- Arquitetura modular profissional
 
 ## ⚠️ OBSERVAÇÕES
 
