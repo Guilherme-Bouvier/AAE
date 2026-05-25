@@ -151,7 +151,7 @@ AAE/
 
  ip install streamlit pandas plotly sqlalchemy playwright
 
-##🌐 Instalar navegador do Playwright
+## 🌐 Instalar navegador do Playwright
  playwright install
 
 ## 🚀 Rodar o sistema
