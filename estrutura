@@ -1,0 +1,32 @@
+
+
+AAE/
+│
+├── main.py
+├── data/
+│   └── rounds.db
+│
+├── analysis/
+│   ├── pattern_detector.py
+│   ├── predictor_engine.py
+│   ├── learning_engine.py
+│
+├── dashboard/
+│   └── app.py
+│
+├── core/                      🔥 NOVO
+│   ├── data_router.py        ← escolhe fonte (OCR / API / FUTURO)
+│   ├── ia_engine.py          ← conecta tudo
+│
+├── vision/                   🔥 NOVO
+│   ├── overlay.py            ← PyQt overlay (OCULUS)
+│   ├── ocr_engine.py         ← leitura da tela
+│
+├── alerts/                  🔥 NOVO
+│   └── telegram_bot.py     ← alertas
+│
+├── config/
+│   └── settings.py
+
+
+python -m streamlit run dashboard/app.py   
