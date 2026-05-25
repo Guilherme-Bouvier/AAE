@@ -92,11 +92,6 @@ INPUTS
 - Status geral da aplicação
 
 ---
-
-# 📁 ESTRUTURA DO PROJETO
-
-```
-
 AAE/
 │
 ├── dashboard/
@@ -113,7 +108,7 @@ AAE/
 │   └── pattern_detector.py
 │
 ├── data_collector/
-│   ├── scraper_playwright.py
+│   └── scraper_playwright.py
 │
 ├── vision/
 │   ├── screen_overlay.py
@@ -130,7 +125,9 @@ AAE/
 ├── launcher.py
 └── README.md
 
-▶️ COMO EXECUTAR O PROJETO
+
+# ▶️ COMO EXECUTAR O PROJETO
+
 1. Instalar dependências
 pip install streamlit pandas plotly sqlalchemy playwright
 2. Instalar navegador do Playwright
@@ -141,14 +138,17 @@ python launcher.py
 ou diretamente:
 
 streamlit run dashboard/app.py
-📦 COMO GERAR O EXECUTÁVEL (.EXE)
+
+# 📦 COMO GERAR O EXECUTÁVEL (.EXE)
+
 1. Instalar PyInstaller
 pip install pyinstaller
 2. Criar EXE
 pyinstaller --onefile --noconsole launcher.py
 3. Arquivo gerado
 /dist/launcher.exe
-🧠 FLUXO DE FUNCIONAMENTO
+
+# 🧠 FLUXO DE FUNCIONAMENTO
 
 Usuário
 │
@@ -169,7 +169,7 @@ Log System + Alert System
 ▼
 Resultado em tempo real
 
-🔥 DIFERENCIAL DO SISTEMA
+# 🔥 DIFERENCIAL DO SISTEMA
 
 ✔ Sistema em tempo real
 ✔ Auto aprendizado
@@ -178,20 +178,24 @@ Resultado em tempo real
 ✔ Logs completos
 ✔ Arquitetura modular profissional
 
-⚠️ OBSERVAÇÕES
+# ⚠️ OBSERVAÇÕES
+
 O sistema usa múltiplas threads
 Playwright pode aumentar o tamanho do EXE
 OCR depende de captura de tela ativa
 Recomendado rodar em máquina com boa performance
-🚀 PRÓXIMO NÍVEL (EVOLUÇÃO FUTURA)
+
+# 🚀 PRÓXIMO NÍVEL (EVOLUÇÃO FUTURA)
+
 Backend FastAPI (modo SaaS)
 Banco remoto (PostgreSQL)
 Dashboard web multiusuário
 Treinamento de IA com dataset histórico
-🧠 AUTOR DO SISTEMA
 
-AAE Intelligent System - Projeto de análise e previsão em tempo real com IA evolutiva.
 
+# 🧠 AUTOR DO SISTEMA
+
+Guilherme Bouvier 
 
 ---
 
@@ -214,14 +218,6 @@ AAE Intelligent System - Projeto de análise e previsão em tempo real com IA ev
 
 # 👉 PRÓXIMO PASSO
 
-Agora você está pronto para:
-
 ## ⚙️ gerar o EXE
 ou
 ## 🌐 transformar em SaaS (nível empresa real)
-
-Se quiser, o próximo passo pode ser:
-
-👉 **“otimizar EXE para leve + rápido”**  
-👉 **“versão SaaS online com login”**  
-👉 **“dashboard estilo empresa (UI profissional)”**
