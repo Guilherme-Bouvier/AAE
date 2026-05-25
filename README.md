@@ -26,24 +26,24 @@ Ele integra:
 
 
 INPUTS
-│
-├── 🌐 URL SCRAPER (Playwright)
-├── 🪟 OCR OVERLAY (Screen Capture)
-└── 📡 STREAM ENGINE
-│
-▼
-🧠 CONTROL CENTER (Cérebro)
-│
-├── 🔮 IA Preditiva
-├── 🧠 IA Evolutiva (Learning Engine)
-├── 📊 LOG SYSTEM (Auditoria)
-├── 🚨 Alert Manager (Telegram)
-│
-▼
-📊 DASHBOARD STREAMLIT
-│
-▼
-👤 USUÁRIO
+│<\b>
+├── 🌐 URL SCRAPER (Playwright)<\b>
+├── 🪟 OCR OVERLAY (Screen Capture)<\b>
+└── 📡 STREAM ENGINE<\b>
+│<\b>
+▼<\b>
+🧠 CONTROL CENTER (Cérebro)<\b>
+│<\b>
+├── 🔮 IA Preditiva<\b>
+├── 🧠 IA Evolutiva (Learning Engine)<\b>
+├── 📊 LOG SYSTEM (Auditoria)<\b>
+├── 🚨 Alert Manager (Telegram)<\b>
+│<\b>
+▼<\b>
+📊 DASHBOARD STREAMLIT<\b>
+│<\b>
+▼<\b>
+👤 USUÁRIO<\b>
 
 
 ---
@@ -92,38 +92,38 @@ INPUTS
 - Status geral da aplicação
 
 ---
-AAE/
-│
-├── dashboard/
-│   └── app.py
-│
-├── core/
-│   ├── control_center.py
-│   ├── engine_master.py
-│   ├── learning_engine.py
-│   └── log_system.py
-│
-├── analysis/
-│   ├── predictor_engine.py
-│   └── pattern_detector.py
-│
-├── data_collector/
-│   └── scraper_playwright.py
-│
-├── vision/
-│   ├── screen_overlay.py
-│   └── overlay_window.py
-│
-├── alerts/
-│   └── stream_alert_manager.py
-│
-├── data/
-│   ├── rounds.db
-│   ├── logs.json
-│   └── learning.json
-│
-├── launcher.py
-└── README.md
+AAE/<\b>
+│<\b>
+├── dashboard/<\b>
+│   └── app.py<\b>
+│<\b>
+├── core/<\b>
+│   ├── control_center.py<\b>
+│   ├── engine_master.py<\b>
+│   ├── learning_engine.py<\b>
+│   └── log_system.py<\b>
+│<\b>
+├── analysis/<\b>
+│   ├── predictor_engine.py<\b>
+│   └── pattern_detector.py<\b>
+│<\b>
+├── data_collector/<\b>
+│   └── scraper_playwright.py<\b>
+│<\b>
+├── vision/<\b>
+│   ├── screen_overlay.py<\b>
+│   └── overlay_window.py<\b>
+│<\b>
+├── alerts/<\b>
+│   └── stream_alert_manager.py<\b>
+│<\b>
+├── data/<\b>
+│   ├── rounds.db<\b>
+│   ├── logs.json<\b>
+│   └── learning.json<\b>
+│<\b>
+├── launcher.py<\b>
+└── README.md<\b>
 
 
 # ▶️ COMO EXECUTAR O PROJETO
@@ -150,24 +150,24 @@ pyinstaller --onefile --noconsole launcher.py
 
 # 🧠 FLUXO DE FUNCIONAMENTO
 
-Usuário
-│
-▼
-Streamlit Dashboard
-│
-▼
-Control Center
-│
-├── IA Preditiva
-├── IA Evolutiva
-├── OCR Engine
-├── Stream Engine
-│
-▼
-Log System + Alert System
-│
-▼
-Resultado em tempo real
+Usuário<\b>
+│<\b>
+▼<\b>
+Streamlit Dashboard<\b>
+│<\b>
+▼<\b>
+Control Center<\b>
+│<\b>
+├── IA Preditiva<\b>
+├── IA Evolutiva<\b>
+├── OCR Engine<\b>
+├── Stream Engine<\b>
+│<\b>
+▼<\b>
+Log System + Alert System<\b>
+│<\b>
+▼<\b>
+Resultado em tempo real<\b>
 
 # 🔥 DIFERENCIAL DO SISTEMA
 
