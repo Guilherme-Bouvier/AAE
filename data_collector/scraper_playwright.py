@@ -100,3 +100,16 @@ class URLScraper:
                 callback(value)
 
             time.sleep(interval)
+
+
+# ==================================================
+# 🔥 COMPATIBILIDADE COM O DASHBOARD (SEM QUEBRAR NADA)
+# ==================================================
+
+class PlaywrightScraper(URLScraper):
+    """
+    Alias de compatibilidade para evitar erro:
+    'cannot import name PlaywrightScraper'
+    """
+
+    pass

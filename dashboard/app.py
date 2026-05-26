@@ -2,36 +2,15 @@ import streamlit as st
 import pandas as pd
 from sqlalchemy import create_engine
 import plotly.express as px
-import threading
 
-# ==========================
-# IA CORE
-# ==========================
 from analysis.pattern_detector import PatternDetector
 from analysis.predictor_engine import PredictorEngine
 
-# ==========================
-# CAPTURA
-# ==========================
 from data_collector.scraper_playwright import PlaywrightScraper
 from core_stream.stream_engine import StreamEngine
 
-# ==========================
-# VISÃO (OCR + OVERLAY)
-# ==========================
-from vision.screen_overlay import ScreenOverlayOCR
-from vision.overlay_window import run_overlay
-
-# ==========================
-# ALERTAS
-# ==========================
 from alerts.stream_alert_manager import StreamAlertManager
-
-# ==========================
-# CÉREBRO DO SISTEMA
-# ==========================
-from core.control_center import ControlCenter
-from core.engine_master import EngineMaster
+from alerts.contact_manager import ContactManager
 
 
 # ==================================================
@@ -39,11 +18,37 @@ from core.engine_master import EngineMaster
 # ==================================================
 
 st.set_page_config(
-    page_title="AAE PRO - FINAL SYSTEM",
+    page_title="AAE - IA Tempo Real",
     layout="wide"
 )
 
-st.title("🧠 AAE PRO - Control Center AI System")
+st.title("📊 AAE - Inteligência Artificial em Tempo Real")
+st.caption("Sistema leve otimizado")
+
+
+# ==================================================
+# ALERT SYSTEM
+# ==================================================
+
+BOT_TOKEN = "SEU_TOKEN_AQUI"
+
+alert_manager = StreamAlertManager(
+    token=BOT_TOKEN
+)
+
+contact_manager = ContactManager(BOT_TOKEN)
+
+
+# ==================================================
+# OCR IMPORT LEVE
+# ==================================================
+
+try:
+    from vision.screen_overlay import ScreenOverlayOCR
+except Exception:
+    ScreenOverlayOCR = None
+
+ocr = None
 
 
 # ==================================================
@@ -53,235 +58,320 @@ st.title("🧠 AAE PRO - Control Center AI System")
 engine = create_engine("sqlite:///data/rounds.db")
 
 
-@st.cache_data(ttl=5)
-def load_data():
-
-    df = pd.read_sql("""
-        SELECT * FROM rounds
-        ORDER BY id DESC
-        LIMIT 200
-    """, engine)
-
-    return df
-
-
-df = load_data()
-
-history = df["multiplier"].tolist() if not df.empty else [1.0]
-
-
 # ==================================================
-# IA ENGINE
-# ==================================================
-
-detector = PatternDetector(history)
-
-predictor = PredictorEngine(
-    type("obj", (), {"df": {"multiplier": history}})
-)
-
-
-# ==================================================
-# OCR + ALERTS
-# ==================================================
-
-ocr = ScreenOverlayOCR()
-
-telegram = StreamAlertManager(
-    token="SEU_TOKEN",
-    chat_id="SEU_CHAT_ID"
-)
-
-
-# ==================================================
-# CONTROL CENTER
-# ==================================================
-
-control = ControlCenter(
-    ia_engine=predictor,
-    alert_manager=telegram,
-    ocr_engine=ocr
-)
-
-
-# ==================================================
-# ENGINE MASTER (START / STOP GLOBAL)
-# ==================================================
-
-engine_master = EngineMaster(control)
-
-
-# ==================================================
-# STREAM STATE
+# SESSION STATE
 # ==================================================
 
 if "stream_data" not in st.session_state:
     st.session_state.stream_data = []
 
+if "stream_running" not in st.session_state:
+    st.session_state.stream_running = False
+
+if "contacts" not in st.session_state:
+    st.session_state.contacts = []
+
+
+contact_manager.contacts = st.session_state.contacts
+
 
 # ==================================================
-# CALLBACK CENTRAL
+# CACHE LOAD DATA
+# ==================================================
+
+@st.cache_data(ttl=5)
+def load_data():
+
+    try:
+        df = pd.read_sql(
+            "SELECT * FROM rounds ORDER BY id DESC LIMIT 200",
+            engine
+        )
+
+        return df
+
+    except:
+        return pd.DataFrame()
+
+
+# ==================================================
+# CACHE IA
+# ==================================================
+
+@st.cache_resource
+def get_predictor(history):
+
+    return PredictorEngine(
+        type(
+            "obj",
+            (),
+            {
+                "df": {
+                    "multiplier": history
+                }
+            }
+        )
+    )
+
+
+# ==================================================
+# LOAD
+# ==================================================
+
+df = load_data()
+
+history = df["multiplier"].tolist() if not df.empty else [1.0]
+
+detector = PatternDetector(history)
+
+predictor = get_predictor(history)
+
+
+# ==================================================
+# CALLBACK STREAM
 # ==================================================
 
 def on_new_value(value):
 
-    result = control.process(value)
+    st.session_state.stream_data.append(value)
 
-    if result:
+    alert_manager.check(
+        value=value,
+        confidence=0.7
+    )
 
-        st.session_state.stream_data.append(result["value"])
+    contact_manager.broadcast(
+        f"📊 Nova vela detectada: {value}x"
+    )
 
-        if len(st.session_state.stream_data) > 300:
-            st.session_state.stream_data = st.session_state.stream_data[-300:]
+    if len(st.session_state.stream_data) > 300:
+        st.session_state.stream_data = st.session_state.stream_data[-300:]
 
 
 # ==================================================
-# MENU LATERAL
+# MENU
 # ==================================================
+
+st.sidebar.title("📌 MENU")
 
 page = st.sidebar.radio(
-    "📌 MENU",
+    "Navegação",
     [
-        "📊 Dashboard",
-        "⚡ Stream URL",
-        "🪟 OCR Sensor",
-        "🧠 Control Center",
-        "⚙️ Engine Master"
+        "📈 Dashboard",
+        "🌐 Captura",
+        "⚡ Stream",
+        "🔮 Previsão",
+        "🪟 OCR",
+        "📱 Telegram"
     ]
 )
 
 
 # ==================================================
-# 📊 DASHBOARD PRINCIPAL
+# DASHBOARD
 # ==================================================
 
-if page == "📊 Dashboard":
+if page == "📈 Dashboard":
 
-    st.subheader("📊 Visão Geral do Sistema")
+    st.subheader("📊 Dashboard")
 
     col1, col2, col3 = st.columns(3)
 
-    col1.metric("Último valor", history[-1])
+    col1.metric("Último", history[-1])
     col2.metric("Volatilidade", detector.volatility())
     col3.metric("Streak", detector.low_streak())
 
     st.divider()
 
-    fig = px.line(x=list(range(len(history))), y=history)
-    st.plotly_chart(fig, use_container_width=True)
+    fig = px.line(
+        x=list(range(len(history))),
+        y=history,
+        title="Histórico"
+    )
+
+    st.plotly_chart(
+        fig,
+        width="stretch"
+    )
 
 
 # ==================================================
-# ⚡ STREAM URL
+# CAPTURA
 # ==================================================
 
-elif page == "⚡ Stream URL":
+elif page == "🌐 Captura":
 
-    st.subheader("⚡ Captura em Tempo Real")
+    st.subheader("🌐 Captura")
 
-    url = st.text_input("URL do sistema")
-
-    col1, col2 = st.columns(2)
+    url = st.text_input("URL")
 
     if url:
 
-        scraper = PlaywrightScraper(url)
+        if st.button("Capturar"):
 
-        if col1.button("▶ START STREAM"):
+            with st.spinner("Capturando..."):
+
+                scraper = PlaywrightScraper(url)
+
+                value = scraper.get_latest()
+
+                if value:
+
+                    st.success(f"{value}x")
+
+                    alert_manager.check(
+                        value=value,
+                        confidence=0.6
+                    )
+
+                else:
+                    st.warning("Nada encontrado")
+
+
+# ==================================================
+# STREAM
+# ==================================================
+
+elif page == "⚡ Stream":
+
+    st.subheader("⚡ Stream Tempo Real")
+
+    url = st.text_input("Stream URL")
+
+    if url:
+
+        if st.button("▶️ Iniciar"):
+
+            scraper = PlaywrightScraper(url)
 
             stream = StreamEngine(
-                scraper=scraper,
-                callback=on_new_value,
-                interval=2
+                scraper,
+                on_new_value,
+                2
             )
 
-            threading.Thread(target=stream.start, daemon=True).start()
+            stream.start()
+
+            st.session_state.stream_running = True
 
             st.success("Stream iniciado")
 
-        if col2.button("⛔ STOP STREAM"):
-
-            st.warning("Controle agora via Engine Master")
-
-
-# ==================================================
-# 🪟 OCR SENSOR
-# ==================================================
-
-elif page == "🪟 OCR Sensor":
-
-    st.subheader("🪟 Sensor Visual (OCR + Overlay)")
-
-    st.info("Selecione a área da tela para captura")
-
-    if st.button("🪟 Abrir Overlay"):
-
-        region = run_overlay()
-
-        if region:
-
-            ocr.set_region(region)
-
-            st.success("Região configurada com sucesso")
-
-    if st.button("📸 Capturar Agora"):
-
-        value = ocr.get_value()
-
-        if value:
-            st.success(f"Vela detectada: {value}x")
-            on_new_value(value)
-        else:
-            st.warning("Nenhum dado detectado")
-
-
-# ==================================================
-# 🧠 CONTROL CENTER
-# ==================================================
-
-elif page == "🧠 Control Center":
-
-    st.subheader("🧠 Núcleo de Inteligência")
-
-    st.json(control.status())
-
-    st.divider()
-
     if st.session_state.stream_data:
 
-        fig = px.line(
+        fig2 = px.line(
             x=list(range(len(st.session_state.stream_data))),
             y=st.session_state.stream_data,
-            title="Stream Controlado pela IA"
+            title="Tempo Real"
         )
 
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(
+            fig2,
+            width="stretch"
+        )
+
+        st.metric(
+            "Última",
+            st.session_state.stream_data[-1]
+        )
 
 
 # ==================================================
-# ⚙️ ENGINE MASTER
+# PREVISÃO
 # ==================================================
 
-elif page == "⚙️ Engine Master":
+elif page == "🔮 Previsão":
 
-    st.subheader("⚙️ Controle Global do Sistema")
+    st.subheader("🔮 IA")
+
+    future = predictor.predict_next(10)
+
+    fig = px.line(
+        x=list(range(10)),
+        y=future,
+        title="Próximos passos"
+    )
+
+    st.plotly_chart(
+        fig,
+        width="stretch"
+    )
+
+
+# ==================================================
+# OCR
+# ==================================================
+
+elif page == "🪟 OCR":
+
+    st.subheader("🪟 OCR")
+
+    if st.button("Testar OCR"):
+
+        if ScreenOverlayOCR is None:
+
+            st.error("OCR indisponível")
+
+        else:
+
+            try:
+
+                if ocr is None:
+                    ocr = ScreenOverlayOCR()
+
+                value = ocr.get_value()
+
+                if value:
+
+                    st.success(f"Detectado: {value}x")
+
+                    alert_manager.check(
+                        value=value,
+                        confidence=0.8
+                    )
+
+                else:
+                    st.warning("Nada detectado")
+
+            except Exception as e:
+
+                st.error(f"Erro OCR: {e}")
+
+
+# ==================================================
+# TELEGRAM
+# ==================================================
+
+elif page == "📱 Telegram":
+
+    st.subheader("📱 Contatos Telegram")
+
+    new_contact = st.text_input("Chat ID")
 
     col1, col2 = st.columns(2)
 
-    if col1.button("▶ START GLOBAL"):
+    with col1:
 
-        msg = engine_master.start()
+        if st.button("➕ Adicionar"):
 
-        st.success(msg)
+            contact_manager.add_contact(new_contact)
 
-    if col2.button("⛔ STOP GLOBAL"):
+            st.session_state.contacts = contact_manager.contacts
 
-        msg = engine_master.stop()
+            st.success("Contato adicionado")
 
-        st.warning(msg)
+    with col2:
+
+        if st.button("🗑 Remover"):
+
+            contact_manager.remove_contact(new_contact)
+
+            st.session_state.contacts = contact_manager.contacts
+
+            st.warning("Contato removido")
 
     st.divider()
 
-    st.subheader("📡 Status Geral")
+    st.write("📋 Lista")
 
-    st.json(engine_master.status())
+    for c in st.session_state.contacts:
+        st.code(c)

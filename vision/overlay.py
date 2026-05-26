@@ -1,99 +1,66 @@
-import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QLabel
-from PyQt5.QtCore import Qt, QRect
-from PyQt5.QtGui import QPainter, QColor
+import easyocr
+import os
 
 
-class Overlay(QWidget):
+class ScreenOverlayOCR:
+    """
+    OCR seguro para captura de tela.
+    Evita download automático de modelos (que causa erro SSL).
+    """
 
     def __init__(self):
-        super().__init__()
 
-        # 🔥 janela sem borda
-        self.setWindowFlags(
-            Qt.FramelessWindowHint |
-            Qt.WindowStaysOnTopHint |
-            Qt.Tool
-        )
+        # ==================================================
+        # 🔥 EVITA ERROS DE PROXY / SSL
+        # ==================================================
+        os.environ["NO_PROXY"] = "*"
 
-        # 🔥 fundo transparente
-        self.setAttribute(Qt.WA_TranslucentBackground)
+        # ==================================================
+        # 🧠 OCR MODE (SEGURO)
+        # ==================================================
+        try:
+            self.reader = easyocr.Reader(
+                ['en'],
+                gpu=False,
+                download_enabled=False  # 🔥 EVITA CRASH DE SSL
+            )
 
-        # tamanho inicial do "sensor"
-        self.setGeometry(300, 300, 300, 200)
+        except Exception as e:
+            print("[OCR ERROR] Falha ao inicializar EasyOCR:", e)
+            self.reader = None
 
-        self.dragging = False
-        self.offset = None
+    # ==================================================
+    # SIMULA CAPTURA (BASE PARA FUTURO OVERLAY)
+    # ==================================================
+    def read_text(self, image):
+        """
+        Recebe imagem e retorna texto detectado
+        """
 
-        self.label = QLabel("📡 AAE SENSOR", self)
-        self.label.setStyleSheet("color: red; font-size: 14px;")
-        self.label.move(10, 10)
+        if self.reader is None:
+            return None
 
-        self.show()
+        try:
+            result = self.reader.readtext(image)
 
-    # ============================
-    # DESENHO DA ÁREA
-    # ============================
+            texts = []
 
-    def paintEvent(self, event):
+            for item in result:
+                text = item[1]
+                texts.append(text)
 
-        painter = QPainter(self)
+            return texts
 
-        # 🔥 borda do sensor
-        painter.setPen(QColor(255, 0, 0))
-        painter.drawRect(self.rect())
+        except Exception as e:
+            print("[OCR ERROR] leitura falhou:", e)
+            return None
 
-        # 🔥 leve transparência interna
-        painter.setBrush(QColor(255, 0, 0, 30))
-        painter.drawRect(self.rect())
-
-    # ============================
-    # MOVER JANELA
-    # ============================
-
-    def mousePressEvent(self, event):
-
-        if event.button() == Qt.LeftButton:
-            self.dragging = True
-            self.offset = event.pos()
-
-    def mouseMoveEvent(self, event):
-
-        if self.dragging:
-            self.move(self.pos() + event.pos() - self.offset)
-
-    def mouseReleaseEvent(self, event):
-        self.dragging = False
-
-    # ============================
-    # REDIMENSIONAR (simples)
-    # ============================
-
-    def keyPressEvent(self, event):
-
-        # aumentar área
-        if event.key() == Qt.Key_Up:
-            self.resize(self.width(), self.height() + 10)
-
-        # diminuir área
-        if event.key() == Qt.Key_Down:
-            self.resize(self.width(), max(50, self.height() - 10))
-
-        # largura +
-        if event.key() == Qt.Key_Right:
-            self.resize(self.width() + 10, self.height())
-
-        # largura -
-        if event.key() == Qt.Key_Left:
-            self.resize(max(50, self.width() - 10), self.height())
-
-
-# ============================
-# EXECUÇÃO
-# ============================
-
-if __name__ == "__main__":
-
-    app = QApplication(sys.argv)
-    window = Overlay()
-    sys.exit(app.exec_())
+    # ==================================================
+    # STATUS DO OCR
+    # ==================================================
+    def status(self):
+        return {
+            "ocr_active": self.reader is not None,
+            "mode": "safe_mode",
+            "download_enabled": False
+        }
